@@ -1,0 +1,314 @@
+---
+title: "Trabajo02 - Teoría de la Decisión"
+author: "Paula Mª Galindo Casas"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<br>
+
+### TEMA: "Elección de la ubicación para abrir un nuevo restaurante"
+
+Una cadena de restaurantes está planeando expandir su negocio en la ciudad de Sevilla. Después de analizar varias zonas, la empresa ha seleccionado tres ubicaciones donde podría abrir su próximo local. Sin embargo, cada una de estas ubicaciones presenta ventajas y desventajas en diferentes aspectos, por lo que la cadena desea tomar una decisión informada basada en múltiples criterios.
+
+Las tres ubicaciones (alternativas) consideradas son: <br>
+  - **Ubicación A**: zona céntrica con alto tráfico peatonal y buena visibilidad. <br> 
+  - **Ubicación B**: área comercial, cerca de un centro comercial y con competidores 
+    cercanos. <br>
+  - **Ubicación C**: zona de oficinas, donde muchas personas trabajan y buscan opciones 
+   de almuerzo. <br>
+   
+Para determinar la mejor ubicación, la cadena ha decidido evaluar las alternativas en base a la accesibilidad, el costo de alquiler y el tráfico de la zona. Se identificaron las siguientes matrices de comparación en pares para cada criterio para evaluar las ubicaciones A, B y C en función a cada uno de los tres criterios: <br>
+
+**1) Accesibilidad**
+
+```{=latex}
+\begin{array}{c|ccc}
+
+\text{Accesibilidad} & \text{A} & \text{B} & \text{C} \\
+\hline
+\text{A} &  1    &  4    &  5 \\
+\text{B} &  1/4  &  1    &  2 \\
+\text{C} &  1/5  &  1/2  &  1 \\
+
+\end{array}
+```
+
+**2) Costo de alquiler**
+
+```{=latex}
+\begin{array}{c|ccc}
+
+\text{Costo alquiler} & \text{A} & \text{B} & \text{C} \\
+\hline
+\text{A} &  1  &  1/3  &  1/5 \\
+\text{B} &  3  &  1    &  1/2 \\
+\text{C} &  5  &  2    &  1 \\
+
+\end{array}
+```
+   
+**3) Tráfico**
+
+```{=latex}
+\begin{array}{c|ccc}
+
+\text{Tráfico} & \text{A} & \text{B} & \text{C} \\
+\hline
+\text{A} &  1    &  6  &  4 \\
+\text{B} &  1/6  &  1  &  1/3 \\
+\text{C} &  1/4  &  3  &  1 \\
+
+\end{array}
+```
+   
+<br>
+
+La cadena mostró sus prioridades en relación con los 3 criterios manejados, lo que permite identificar la siguiente tabla:
+
+```{=latex}
+\begin{array}{c|ccc}
+
+ & \text{Accesibilidad} & \text{Costo alquiler} & \text{Tráfico} \\
+\hline
+\text{Accesibilidad}  &  1    &  5  &  3 \\
+\text{Costo alquiler} &  1/5  &  1  &  1/3 \\
+\text{Tráfico}        &  1/3  &  3  &  1 \\
+
+\end{array}
+```
+
+<br>
+
+A partir de estos datos se pide:
+
+(a) Identificar el diagrama de jerarquías de este problema de decisión.
+(b) Calcular las ponderaciones asociadas a cada criterio manejado.
+(c) Calcular las ponderaciones de las tres alternativas en función de cada criterio.
+(d) Verificar la consistencia de las preferencias de la cadena de restaurantes.
+(e) Determinar la prioridad global de cada ubicación
+
+<br>
+
+_________________________________________________________________________________________________________________
+
+<br>
+Antes de empezar, importamos los scripts R donde se cargarán todas las funciones que necesitaremos para resolver el problema:
+```{r}
+source("teoriadecision_funciones_multicriterio.R")
+source("teoriadecision_funciones_multicriterio_diagram.R")
+source("teoriadecision_funciones_multicriterio_utiles.R")
+```
+
+<br>
+<br>
+
+### Resolución con método AHP mediante funciones R
+
+Primero cargo los datos dados en el enunciado.
+
+**Matriz de criterios**
+```{r}
+nombre.criterios <-c("Accesibilidad","Costo alquiler","Tráfico")
+Xmat.criterios= multicriterio.crea.matrizvaloraciones(c(1,5,3,
+                                                        1/5,1,1/3,
+                                                        1/3,3,1),
+                                                      3,nombre.criterios)
+Xmat.criterios
+```
+
+**Matriz Alternativas/Criterios** <br>
+
+- Accesibilidad
+```{r}
+nombre.alternativas <- c("Ubicación A","Ubicación B","Ubicación C")
+Xmat.accesibilidad = multicriterio.crea.matrizvaloraciones(c(1,4,5,
+                                                             1/4,1,2,
+                                                             1/5,1/2,1),
+                                                           3,nombre.alternativas)
+Xmat.accesibilidad
+```
+- Costo de alquiler
+```{r}
+Xmat.costoAlquiler = multicriterio.crea.matrizvaloraciones(c(1,1/3,1/5,
+                                                             3,1,1/2,
+                                                             5,2,1),
+                                                           3,nombre.alternativas)
+Xmat.costoAlquiler
+```
+- Tráfico
+```{r}
+Xmat.trafico = multicriterio.crea.matrizvaloraciones(c(1,6,4,
+                                                       1/6,1,1/3,
+                                                       1/4,3,1),
+                                                     3,nombre.alternativas)
+Xmat.trafico
+```
+
+<br>
+
+#### (a) Identificar el diagrama de jerarquías de este problema de decisión.
+```{r}
+num.alt=3
+num.cri=3
+Xmatriznivel2 = array(NA,dim=c(num.alt,num.alt,num.cri))
+Xmatriznivel2[,,1] = Xmat.accesibilidad
+Xmatriznivel2[,,2] = Xmat.costoAlquiler
+Xmatriznivel2[,,3] = Xmat.trafico
+dimnames(Xmatriznivel2)[[1]] = nombre.alternativas
+dimnames(Xmatriznivel2)[[2]] = nombre.alternativas
+dimnames(Xmatriznivel2)[[3]] = nombre.criterios
+multicriterio.metodoahp.diagrama(Xmat.criterios,Xmatriznivel2)
+```
+<br>
+
+#### (b) Calcular las ponderaciones asociadas a cada criterio manejado.
+```{r}
+pesos.criterios = multicriterio.metodoAHP.variante3.basico(Xmat.criterios)
+pesos.criterios$valoraciones.ahp
+pesos.criterios$valoraciones.ahp.ordenadas
+```
+**CONCLUSIÓN:** vemos que la accesibilidad es el criterio más importante para seleccionar la ubicación del nuevo restaurante con una ponderación de 0.6333457 (63,33%), luego es el criterio que tiene más peso en la decisión final, seguido del tráfico con una poderación de 0.2604980 (26,04%) y el costo de alquiler que tiene el menor peso (10,61%). <br>
+
+<br>
+
+#### (c) Calcular las ponderaciones de las tres alternativas en función de cada criterio. 
+Los pesos locales son:
+
+- Accesibilidad
+```{r}
+pesos.accesibilidad = multicriterio.metodoAHP.variante3.basico(Xmat.accesibilidad)
+pesos.accesibilidad$valoraciones.ahp
+pesos.accesibilidad$valoraciones.ahp.ordenadas
+```
+**CONCLUSIÓN:** podemos ver que para el criterio de accesibilidad, la ubicación A es la alternativa más favorable ya que es la que presenta mayor peso (0.6806426) entre las demás. <br>
+
+- Costo de alquiler
+```{r}
+pesos.costoAlquiler = multicriterio.metodoAHP.variante3.basico(Xmat.costoAlquiler)
+pesos.costoAlquiler$valoraciones.ahp
+pesos.costoAlquiler$valoraciones.ahp.ordenadas
+```
+**CONCLUSIÓN:** podemos ver que para el criterio de costo de alquiler, la ubicación C es la alternativa más favorable ya que es la que presenta mayor peso (0.5812636) entre las demás. <br>
+
+- Tráfico
+```{r}
+pesos.trafico = multicriterio.metodoAHP.variante3.basico(Xmat.trafico)
+pesos.trafico$valoraciones.ahp
+pesos.trafico$valoraciones.ahp.ordenadas
+```
+**CONCLUSIÓN:** podemos ver que para el criterio de tráfico, la ubicación A es la alternativa más favorable ya que es la que presenta mayor peso (0.6333457) entre las demás. <br>
+
+<br>
+
+#### (d) Verificar la consistencia de las preferencias de la cadena de restaurantes. 
+
+- Consistencia de los criterios:
+```{r}
+multicriterio.metodoAHP.coef.inconsistencia(Xmat.criterios)
+```
+- Consistencia de la accesibilidad:
+```{r}
+multicriterio.metodoAHP.coef.inconsistencia(Xmat.accesibilidad)
+```
+- Consistencia del costo de alquiler:
+```{r}
+multicriterio.metodoAHP.coef.inconsistencia(Xmat.costoAlquiler)
+```
+- Consistencia del tráfico
+```{r}
+multicriterio.metodoAHP.coef.inconsistencia(Xmat.trafico)
+```
+<br>
+
+#### (e) Determinar la prioridad global de cada ubicación
+
+Los pesos globales son:
+```{r}
+tabla.pesosglobales.ahp = multicriterio.metodoAHP.pesosglobales_entabla(pesos.criterios$valoraciones.ahp,
+                                                                        rbind(pesos.accesibilidad$valoraciones.ahp,
+                                                                              pesos.costoAlquiler$valoraciones.ahp,
+                                                                              pesos.trafico$valoraciones.ahp))
+knitr::kable(tabla.pesosglobales.ahp)
+```
+Expresada en porcentajes:
+```{r}
+knitr::kable(tabla.pesosglobales.ahp*100,digits = 2)
+```
+Los pesos de las ramas son:
+```{r}
+vPn1 = tabla.pesosglobales.ahp[4,1:3]
+mPn2 = tabla.pesosglobales.ahp[1:3,1:3]
+mPondRamasb = mPn2*matrix(vPn1,ncol=3,nrow=3,byrow = T)
+mPondRamas = tabla.pesosglobales.ahp
+mPondRamas[1:3,1:3] = mPondRamasb
+mPondRamas[4,4] = 1
+knitr::kable(mPondRamas)
+```
+Expresados en porcentajes:
+```{r}
+knitr::kable(mPondRamas*100,digits = 2)
+```
+
+**CONCLUSIÓN:** finalmente se puede decir que la ubicación A, la zona céntrica con alto tráfico peatonal y buena visibilidad, es la mejor opción para abrir el nuevo restaurante, con una ponderación global de 0,6212331 (62,12%). Esto indica que, a partir de los criterios evaluados (accesibilidad, costo de alquiler y tráfico), esta ubicación es la que mejor cumple con los requisitos de la empresa en comparación con las demás alternativas que poseen ponderaciones globales mucho más bajas.
+
+<br>
+<br>
+
+### Resolución con método AHP mediante la librería AHP
+
+Los datos están recogidos en el archivo llamado "problema.ahp". Lo cargamos:
+```{r}
+library(ahp)
+ahp_problema = ahp::Load("problema.ahp")
+ahp_problema
+```
+
+<br>
+
+#### (a) Identificar el diagrama de jerarquías de este problema de decisión.
+```{r}
+Visualize(ahp_problema)
+```
+
+<br>
+
+#### (b) Calcular las ponderaciones asociadas a cada criterio manejado. <br>
+#### (c) Calcular las ponderaciones de las tres alternativas en función de cada criterio. <br>
+#### (d) Verificar la consistencia de las preferencias de la cadena de restaurantes.
+```{r}
+Calculate(ahp_problema)
+print(ahp_problema, priority = function(x) x$parent$priority["Total", x$name])
+```
+Lo analizamos:
+```{r}
+Analyze(ahp_problema,variable="priority")
+```
+**CONCLUSIÓN:** en cuanto a los criterios podemos decir que el más importante para la cadena de restaurantes es la accesibilidad con un 63,7%, seguido del tráfico (25,8%) y siendo el costo de alquiler el criterio con menor importancia (10,5%). <br> Si nos centramos en cada uno de los criterios por separados vemos que, para la accesibilidad y el tráfico, la ubicación A es la que presenta mayor prioridad con un 68,3% y 69,1%, respectivamente, mientras que para el costo de alquiler es la ubicación C la que presenta mayor ponderación con un 58,2%. La inconsistencia general es baja, 3,7%, por lo que las decisiones y prefereancias que toma la cadenas de restaurantes con coherentes y confiables.  
+
+<br>
+
+#### (e) Determinar la prioridad global de cada ubicación
+```{r}
+Analyze(ahp_problema)
+```
+Analizamos con la tabla mejorada: 
+```{r}
+aa= AnalyzeTable(ahp_problema)
+formattable::as.htmlwidget(aa)
+aab=AnalyzeTable(ahp_problema,variable="priority")
+formattable::as.htmlwidget(aab)
+```
+**CONCLUSIÓN:** podemos concluir diciendo que la ubicación A, con una prioridad global de 62,5%, es la mejor alternativa combinando los tres criterios evaluados por la cadena de restaurante, especialmente en accesibilidad y tráfico que son los criterios que presentan mayores pesos en dicha ubicación. Por otro lado tenemos que la ubicación B presenta una prioridad global de 18,3%, siendo la peor de las alternativas barajadas, ya que aunque sea más económica en términos de costo de alquiler, no presenta grandes pesos en los demás criterios. 
+
+<br>
+<br>
+
+### Resolución con método ELECTRE
+
+
