@@ -27,61 +27,50 @@ Para determinar la mejor ubicación, la cadena ha decidido evaluar las alternati
 
 **1) Accesibilidad**
 
-```{=latex}
+$$
 \begin{array}{c|ccc}
-
 \text{Accesibilidad} & \text{A} & \text{B} & \text{C} \\
 \hline
-\text{A} &  1    &  4    &  5 \\
-\text{B} &  1/4  &  1    &  2 \\
-\text{C} &  1/5  &  1/2  &  1 \\
-
+\text{A} & 1 & 4 & 5 \\
+\text{B} & \frac{1}{4} & 1 & 2 \\
+\text{C} & \frac{1}{5} & \frac{1}{2} & 1 \\
 \end{array}
-```
-
+$$
 **2) Costo de alquiler**
 
-```{=latex}
+$$
 \begin{array}{c|ccc}
-
 \text{Costo alquiler} & \text{A} & \text{B} & \text{C} \\
 \hline
-\text{A} &  1  &  1/3  &  1/5 \\
-\text{B} &  3  &  1    &  1/2 \\
-\text{C} &  5  &  2    &  1 \\
-
+\text{A} & 1 & \frac{1}{3} & \frac{1}{5} \\
+\text{B} & 3 & 1 & \frac{1}{2} \\
+\text{C} & 5 & 2 & 1 \\
 \end{array}
-```
-   
+$$
 **3) Tráfico**
 
-```{=latex}
+$$
 \begin{array}{c|ccc}
-
 \text{Tráfico} & \text{A} & \text{B} & \text{C} \\
 \hline
-\text{A} &  1    &  6  &  4 \\
-\text{B} &  1/6  &  1  &  1/3 \\
-\text{C} &  1/4  &  3  &  1 \\
-
+\text{A} & 1 & 6 & 4 \\
+\text{B} & \frac{1}{6} & 1 & \frac{1}{3} \\
+\text{C} & \frac{1}{4} & 3 & 1 \\
 \end{array}
-```
-   
+$$
 <br>
 
 La cadena mostró sus prioridades en relación con los 3 criterios manejados, lo que permite identificar la siguiente tabla:
 
-```{=latex}
+$$
 \begin{array}{c|ccc}
-
- & \text{Accesibilidad} & \text{Costo alquiler} & \text{Tráfico} \\
+\  & \text{Accesibilidad} & \text{Costo alquiler} & \text{Tráfico} \\
 \hline
-\text{Accesibilidad}  &  1    &  5  &  3 \\
-\text{Costo alquiler} &  1/5  &  1  &  1/3 \\
-\text{Tráfico}        &  1/3  &  3  &  1 \\
-
+\text{Accesibilidad} & 1 & 5 & 3 \\
+\text{Costo alquiler} & \frac{1}{5} & 1 & \frac{1}{3} \\
+\text{Tráfico} & \frac{1}{3} & 3 & 1 \\
 \end{array}
-```
+$$
 
 <br>
 
