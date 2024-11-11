@@ -36,6 +36,7 @@ $$
 \text{C} & \frac{1}{5} & \frac{1}{2} & 1 \\
 \end{array}
 $$
+
 **2) Costo de alquiler**
 
 $$
@@ -47,6 +48,7 @@ $$
 \text{C} & 5 & 2 & 1 \\
 \end{array}
 $$
+
 **3) Tráfico**
 
 $$
